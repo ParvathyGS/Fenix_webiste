@@ -1,0 +1,115 @@
+{% extends 'sites/base.html' %}
+{% load humanize %}
+
+{% block title %}{{ site.name }} — Fenix Homes{% endblock %}
+
+{% block content %}
+<div class="container fx-detail-wrap">
+    {% if user.is_authenticated and user.is_staff %}
+        <a href="{% url 'list_sites' %}" class="fx-back-link"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+    {% else %}
+        <a href="{% url 'home' %}" class="fx-back-link"><i class="bi bi-arrow-left"></i> Back to Home</a>
+    {% endif %}
+
+    <div class="fx-detail-card">
+        <div class="fx-detail-header">
+            <span class="fx-badge fx-badge-{{ site.status|lower }}">{{ site.status }}</span>
+            <h1>{{ site.name }}</h1>
+            <p class="fx-detail-sub"><i class="bi bi-geo-alt"></i> {{ site.location }}</p>
+        </div>
+
+        <div class="row g-3 fx-detail-grid">
+            <div class="col-md-6">
+                <div class="fx-info-item">
+                    <i class="bi bi-calendar-event"></i>
+                    <div>
+                        <span>Start Date</span>
+                        <strong>{{ site.start_date }}</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="fx-info-item">
+                    <i class="bi bi-calendar-check"></i>
+                    <div>
+                        <span>End Date</span>
+                        <strong>{{ site.end_date|default:"In progress" }}</strong>
+                    </div>
+                </div>
+            </div>
+            {% if user.is_authenticated and user.is_staff %}
+                <div class="col-md-6">
+                    <div class="fx-info-item">
+                        <i class="bi bi-cash-stack"></i>
+                        <div>
+                            <span>Budget</span>
+                            <strong>&#8377;{{ site.budget|floatformat:2|intcomma }}</strong>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="col-md-6">
+                <div class="fx-info-item">
+                    <i class="bi bi-person-badge"></i>
+                    <div>
+                        <span>Engineer In-Charge</span>
+                        <strong>{{ site.engineer_incharge }}</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="fx-info-item align-items-start">
+                    <i class="bi bi-chat-left-text"></i>
+                    <div>
+                        <span>Remarks</span>
+                        <strong class="fw-normal">{{ site.remarks|default:"No remarks added."|linebreaksbr }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fx-photos-section">
+            <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                <h5 class="mb-0"><i class="bi bi-images me-1"></i> Photos</h5>
+                {% if user.is_authenticated and user.is_staff %}
+                    <a href="{% url 'site_image_add' site.id %}" class="btn btn-outline-navy btn-sm">
+                        <i class="bi bi-plus-lg me-1"></i> Add Photo
+                    </a>
+                {% endif %}
+            </div>
+            {% if site.images.all %}
+                <div class="row g-2">
+                    {% for img in site.images.all %}
+                        <div class="col-4 col-md-3">
+                            <div class="fx-photo-thumb">
+                                <img src="{{ img.image.url }}" alt="{{ img.caption|default:site.name }}">
+                                {% if user.is_authenticated and user.is_staff %}
+                                    <form method="post" action="{% url 'site_image_delete' img.id %}" class="fx-photo-delete">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete photo">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted small mb-0">No photos uploaded yet.</p>
+            {% endif %}
+        </div>
+
+        {% if user.is_authenticated and user.is_staff %}
+            <div class="fx-detail-actions">
+                <a href="{% url 'site_update' site.pk %}" class="btn btn-amber">
+                    <i class="bi bi-pencil me-1"></i> Edit Site
+                </a>
+                <a href="{% url 'site_delete' site.pk %}" class="btn btn-outline-danger">
+                    <i class="bi bi-trash me-1"></i> Delete
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

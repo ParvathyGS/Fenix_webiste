@@ -1,0 +1,43 @@
+{% extends 'sites/base.html' %}
+
+{% block title %}Staff Login — Fenix Homes{% endblock %}
+
+{% block content %}
+<div class="container fx-form-wrap">
+    <div class="fx-form-card">
+        <div class="fx-form-header">
+            <i class="bi bi-shield-lock"></i>
+            <div>
+                <h2>Staff Login</h2>
+                <p>Sign in to manage construction sites.</p>
+            </div>
+        </div>
+
+        {% if form.errors %}
+            <div class="alert alert-danger py-2">Incorrect username or password.</div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label" for="{{ form.username.id_for_label }}">Username</label>
+                {{ form.username }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="{{ form.password.id_for_label }}">Password</label>
+                {{ form.password }}
+            </div>
+            <input type="hidden" name="next" value="{{ next }}">
+            <button type="submit" class="btn btn-amber w-100">
+                <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+            </button>
+        </form>
+
+        <div class="text-center mt-3">
+            <a href="{% url 'home' %}" class="fx-back-link justify-content-center">
+                <i class="bi bi-arrow-left"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
