@@ -1,0 +1,20 @@
+{% extends 'sites/base.html' %}
+
+{% block title %}Site Not Found — Fenix Homes{% endblock %}
+
+{% block content %}
+<div class="container fx-notfound">
+    <i class="bi bi-signpost-split"></i>
+    <h2>Site #{{ site_id }} not found</h2>
+    <p>This construction site may have been removed or never existed.</p>
+    {% if user.is_authenticated and user.is_staff %}
+        <a href="{% url 'list_sites' %}" class="btn btn-amber">
+            <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+        </a>
+    {% else %}
+        <a href="{% url 'home' %}" class="btn btn-amber">
+            <i class="bi bi-arrow-left me-1"></i> Back to Home
+        </a>
+    {% endif %}
+</div>
+{% endblock %}

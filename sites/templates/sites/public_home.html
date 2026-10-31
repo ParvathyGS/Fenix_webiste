@@ -1,0 +1,160 @@
+{% extends 'sites/base.html' %}
+{% load humanize static %}
+
+{% block title %}Fenix Homes — Building Kerala's Skyline{% endblock %}
+
+{% block content %}
+
+<section class="fx-hero">
+    <div class="container">
+        <div class="row align-items-center gy-4">
+            <div class="col-lg-7">
+                <h1>Building homes and infrastructure people rely on.</h1>
+                <p class="fx-eyebrow"> Let's build your dream together !! </p>
+                <p class="fx-hero-sub">From groundbreak to handover — take a look at what our teams are building right now, and what we've already delivered.</p>
+                <a href="#our-projects" class="btn btn-amber btn-lg fx-hero-cta">
+                    <i class="bi bi-arrow-down-circle me-1"></i> Explore Our Projects
+                </a>
+            </div>
+            <div class="col-lg-5">
+                <div class="fx-hero-logo-wrap">
+                    <div class="fx-hero-wordmark">
+                        <svg viewBox="0 0 100 100" class="fx-hero-wordmark-icon" aria-hidden="true">
+                            <path d="M8 54 L50 16 L96 62" fill="none" stroke="currentColor" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+                            <rect x="21" y="6" width="13" height="26" rx="1" fill="currentColor"/>
+                            <rect x="33" y="50" width="14" height="14" rx="2" fill="currentColor"/>
+                            <rect x="53" y="50" width="14" height="14" rx="2" fill="currentColor"/>
+                            <rect x="33" y="70" width="14" height="14" rx="2" fill="currentColor"/>
+                            <rect x="53" y="70" width="14" height="14" rx="2" fill="currentColor"/>
+                        </svg>
+                        <span class="fx-hero-wordmark-fenix">FENIX</span>
+                        <span class="fx-hero-wordmark-homes">HOMES</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container fx-carousel-wrap">
+    {% if carousel_images %}
+        <div id="fxCarousel" class="carousel slide fx-carousel" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                {% for img in carousel_images %}
+                    <button type="button" data-bs-target="#fxCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
+                            class="{% if forloop.first %}active{% endif %}"
+                            {% if forloop.first %}aria-current="true"{% endif %}
+                            aria-label="Slide {{ forloop.counter }}"></button>
+                {% endfor %}
+            </div>
+            <div class="carousel-inner">
+                {% for img in carousel_images %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <img src="{{ img.image.url }}" alt="{{ img.caption|default:img.site.name }}">
+                        <div class="carousel-caption">
+                            <h5>{{ img.site.name }}</h5>
+                            <p>{{ img.caption|default:img.site.location }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            {% if carousel_images|length > 1 %}
+                <button class="carousel-control-prev" type="button" data-bs-target="#fxCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#fxCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                </button>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="fx-carousel-empty">
+            <i class="bi bi-images"></i>
+            <p>Project photos will appear here once the team uploads them.</p>
+        </div>
+    {% endif %}
+</section>
+
+<section class="fx-counters">
+    <p>
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-4">
+                <div class="fx-counter-item">
+                    <div class="fx-counter-value fx-counter" data-target="{{ total_sites }}">0</div>
+                    <div class="fx-counter-label">Total Sites</div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="fx-counter-item">
+                    <div class="fx-counter-value fx-counter" data-target="{{ ongoing }}">0</div>
+                    <div class="fx-counter-label">Ongoing</div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="fx-counter-item">
+                    <div class="fx-counter-value fx-counter" data-target="{{ completed }}">0</div>
+                    <div class="fx-counter-label">Completed</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </p>
+</section>
+<p></p>
+<section class="container fx-sites" id="our-projects">
+    <div class="d-flex justify-content-between align-items-end mb-3 flex-wrap gap-2">
+        <h2 class="fx-section">Our Projects</h2>
+    </div>
+
+    {% if sites %}
+        <div class="row g-4">
+            {% for site in sites %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="fx-card h-100">
+                        <div class="fx-card-media">
+                            {% with img=site.images.first %}
+                                {% if img %}
+                                    <img src="{{ img.image.url }}" alt="{{ site.name }}">
+                                {% else %}
+                                    <div class="fx-card-media-placeholder"><i class="bi bi-building"></i></div>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                        <div class="fx-card-top">
+                            <span class="fx-badge fx-badge-{{ site.status|lower }}">{{ site.status }}</span>
+                        </div>
+                        <h5 class="fx-card-title">
+                            <a href="{% url 'site_detail' site.id %}">{{ site.name }}</a>
+                        </h5>
+                        <ul class="fx-meta-list">
+                            <li><i class="bi bi-geo-alt"></i> {{ site.location }}</li>
+                            <li>
+                                <i class="bi bi-calendar3"></i>
+                                {{ site.start_date }}{% if site.end_date %} &ndash; {{ site.end_date }}{% endif %}
+                            </li>
+                            <li><i class="bi bi-person-badge"></i> {{ site.engineer_incharge }}</li>
+                        </ul>
+                        <div class="fx-card-actions">
+                            <a href="{% url 'site_detail' site.id %}" class="btn btn-view-details btn-sm"><div><l>
+                                View Details</l></div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="fx-empty">
+            <i class="bi bi-building-add"></i>
+            <h4>No projects to show yet</h4>
+            <p>Check back soon — new projects will appear here as they're added.</p>
+        </div>
+    {% endif %}
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'sites/js/counters.js' %}"></script>
+{% endblock %}
